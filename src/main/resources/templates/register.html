@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Register</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/" class="btn btn-light">← Home</a>
+</header>
+
+<main class="container narrow">
+    <div class="panel">
+        <h1>Create Account</h1>
+        <p class="subtitle">Join us and discover your next getaway.</p>
+
+        <p class="message error" th:if="${error}" th:text="${error}"></p>
+
+        <form action="/register" method="post">
+            <label>Username</label>
+            <input name="username" placeholder="Choose a username" required>
+
+            <label>Full Name</label>
+            <input name="name" placeholder="Enter your name" required>
+
+            <input name="phone" placeholder="10-digit phone number" required
+                   pattern="[0-9]{10}" maxlength="10" inputmode="numeric"
+                   title="Phone number must be exactly 10 digits (numbers only)">
+
+            <input name="password" type="password" placeholder="Create a password" required
+                   minlength="8" pattern="(?=.*[A-Za-z])(?=.*[0-9])(?=.*[^A-Za-z0-9]).{8,}"
+                   title="At least 8 characters, with a letter, a number and a special character">
+            <small>At least 8 characters, with a letter, a number and a special character.</small>
+
+            <button class="btn" type="submit">Create Account</button>
+        </form>
+
+        <p class="form-footer">
+            Already registered? <a href="/login">Login</a>
+        </p>
+    </div>
+</main>
+
+</body>
+</html>

@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Add Farmstay</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/" class="btn btn-light">← Home</a>
+</header>
+
+<main class="container narrow">
+    <div class="panel">
+        <h1>Add a Farmstay</h1>
+        <p class="subtitle">Add a new property to your collection.</p>
+
+        <form action="/add" method="post" enctype="multipart/form-data">
+            <label>Farmstay Name</label>
+            <input name="name" placeholder="Enter property name" required>
+
+            <label>Price per Night (₹)</label>
+            <input name="pricePerNight" type="number" min="1" required>
+
+            <label>Maximum Guests</label>
+            <input name="maxGuests" type="number" min="1" required>
+
+            <label>Location</label>
+            <input name="location" placeholder="e.g. Coorg, Karnataka">
+
+            <label>Description</label>
+            <textarea name="description" rows="4" placeholder="What makes this farmstay special?"></textarea>
+
+            <label>Property Photos</label>
+            <input name="photos" type="file" accept="image/*" multiple>
+
+            <button type="submit" class="btn">Save Farmstay</button>
+        </form>
+    </div>
+</main>
+
+</body>
+</html>

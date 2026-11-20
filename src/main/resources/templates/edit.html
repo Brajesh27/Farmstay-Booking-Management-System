@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Edit Farmstay</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a th:href="@{/farmstay/{id}(id=${farmstay.id})}" class="btn btn-light">← Back</a>
+</header>
+
+<main class="container narrow">
+    <div class="panel">
+        <h1>Edit Farmstay</h1>
+
+        <form th:action="@{/edit/{id}(id=${farmstay.id})}"
+              method="post" enctype="multipart/form-data">
+
+            <label>Farmstay Name</label>
+            <input name="name" th:value="${farmstay.name}" required>
+
+            <label>Price per Night (₹)</label>
+            <input name="pricePerNight" type="number"
+                   th:value="${farmstay.pricePerNight}" min="1" required>
+
+            <label>Maximum Guests</label>
+            <input name="maxGuests" type="number"
+                   th:value="${farmstay.maxGuests}" min="1" required>
+
+            <label>Location</label>
+            <input name="location" th:value="${farmstay.location}">
+
+            <label>Description</label>
+            <textarea name="description" rows="4" th:text="${farmstay.description}"></textarea>
+
+            <label>Add More Photos</label>
+            <input name="photos" type="file" accept="image/*" multiple>
+
+            <button class="btn" type="submit">Save Changes</button>
+        </form>
+    </div>
+
+    <section class="panel">
+        <h2>Delete Farmstay</h2>
+        <p>This also deletes all bookings of this farmstay. It cannot be undone.</p>
+        <form th:action="@{/delete/{id}(id=${farmstay.id})}" method="post"
+              onsubmit="return confirm('Delete this farmstay and all its bookings?')">
+            <button class="btn btn-danger" type="submit">Delete Farmstay</button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <h2>Current Photos</h2>
+        <p class="empty" th:if="${farmstay.photos.isEmpty()}">No photos yet.</p>
+
+        <div class="gallery">
+            <div th:each="p : ${farmstay.photos}">
+                <img th:src="${p}" alt="Farmstay photo">
+                <form th:action="@{/edit/{id}/remove-photo(id=${farmstay.id})}"
+                      method="post" onsubmit="return confirm('Remove this photo?')">
+                    <input type="hidden" name="photo" th:value="${p}">
+                    <button class="btn btn-danger" type="submit">Remove Photo</button>
+                </form>
+            </div>
+        </div>
+    </section>
+</main>
+
+</body>
+</html>

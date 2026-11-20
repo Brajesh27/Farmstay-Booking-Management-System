@@ -1,0 +1,44 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login | Green Valley</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/">← Home</a>
+</header>
+
+<main class="container narrow">
+    <div class="panel">
+        <h1>Welcome Back</h1>
+        <p>Login to manage your farmstay bookings.</p>
+
+        <p class="message error"
+           th:if="${error}" th:text="${error}"></p>
+
+        <form action="/login" method="post">
+            <label>Username</label>
+            <input name="username" placeholder="Enter username" required>
+
+            <label>Password</label>
+            <input name="password" type="password"
+                   placeholder="Enter password" required>
+
+            <button type="submit">Login</button>
+        </form>
+
+        <p>
+            New here?
+            <a href="/register">Create an account</a>
+        </p>
+    </div>
+</main>
+
+</body>
+</html>

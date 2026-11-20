@@ -1,0 +1,89 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Green Valley Farmstay</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+
+    <nav>
+        <th:block th:if="${currentUser == null}">
+            <a href="/login">Login</a>
+            <a href="/register" class="btn">Register</a>
+        </th:block>
+
+        <th:block th:if="${currentUser != null}">
+            <span>Hi, <b th:text="${currentUser.name}"></b></span>
+            <a href="/my-bookings" th:if="${!currentUser.admin}">My Bookings</a>
+            <a href="/add" th:if="${currentUser.admin}">Add Farmstay</a>
+            <a href="/admin/bookings" th:if="${currentUser.admin}">All Bookings</a>
+            <a href="/profile">Profile</a>
+            <a href="/logout">Logout</a>
+        </th:block>
+    </nav>
+</header>
+
+<section class="hero">
+    <h1>Escape to Nature 🌿</h1>
+    <p>Discover beautiful farmstays for your perfect getaway.</p>
+</section>
+
+<main class="container">
+    <h2>Explore Our Farmstays</h2>
+
+    <form class="search" action="/" method="get">
+        <input name="location" placeholder="Location"
+               th:value="${location}">
+
+        <input name="maxPrice" type="number" min="1"
+               placeholder="Maximum price"
+               th:value="${maxPrice}">
+
+        <input name="guests" type="number" min="1"
+               placeholder="Guests"
+               th:value="${guests}">
+
+        <button type="submit">Search</button>
+        <a href="/">Clear</a>
+    </form>
+
+    <p class="empty" th:if="${farmstays.isEmpty()}">
+        No farmstays found.
+    </p>
+
+    <div class="grid">
+        <div class="card" th:each="f : ${farmstays}">
+            <img th:if="${f.mainPhoto != null and !f.mainPhoto.isEmpty()}"
+                 th:src="${f.mainPhoto}" th:alt="${f.name}">
+
+            <div class="card-content">
+                <h3 th:text="${f.name}"></h3>
+
+                <p>📍 <span th:text="${f.location}"></span></p>
+
+                <p>👥 Up to <span th:text="${f.maxGuests}"></span> guests</p>
+
+                <p class="price">
+                    ₹<span th:text="${f.pricePerNight}"></span>
+                    <small>/ night</small>
+                </p>
+
+                <a class="btn"
+                   th:href="@{/farmstay/{id}(id=${f.id})}">
+                    View Details
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
+
+<footer>© 2026 Green Valley Farmstay</footer>
+
+</body>
+</html>

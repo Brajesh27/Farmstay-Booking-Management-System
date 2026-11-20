@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>All Bookings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/" class="btn btn-light">← Farmstays</a>
+</header>
+
+<main class="container">
+    <h1>All Bookings</h1>
+    <p class="subtitle">Manage and view customer reservations.</p>
+
+    <!-- dashboard numbers -->
+    <div class="stats">
+        <div class="stat"><b th:text="${confirmedCount}">0</b><span>Confirmed</span></div>
+        <div class="stat"><b th:text="${cancelledCount}">0</b><span>Cancelled</span></div>
+        <div class="stat"><b th:text="${thisMonthCount}">0</b><span>Check-ins this month</span></div>
+        <div class="stat"><b th:text="'₹' + ${#numbers.formatDecimal(revenue, 1, 'COMMA', 0, 'POINT')}">₹0</b><span>Revenue (confirmed)</span></div>
+        <div class="stat"><b th:text="${mostBooked}">-</b><span>Most booked</span></div>
+    </div>
+
+    <!-- filter -->
+    <form class="search" action="/admin/bookings" method="get">
+        <select name="farmstayId">
+            <option value="">All farmstays</option>
+            <option th:each="f : ${farmstays}" th:value="${f.id}" th:text="${f.name}"
+                    th:selected="${f.id == selectedFarmstay}"></option>
+        </select>
+        <select name="status">
+            <option value="">All statuses</option>
+            <option value="CONFIRMED" th:selected="${selectedStatus == 'CONFIRMED'}">Confirmed</option>
+            <option value="CANCELLED" th:selected="${selectedStatus == 'CANCELLED'}">Cancelled</option>
+        </select>
+        <label><input type="checkbox" name="upcoming" value="true" th:checked="${upcoming}"> Upcoming only</label>
+        <button class="btn" type="submit">Filter</button>
+        <a href="/admin/bookings">Clear</a>
+    </form>
+
+    <p class="empty" th:if="${bookings.isEmpty()}">No bookings found.</p>
+
+    <div class="table-wrap" th:unless="${bookings.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th><th>Guest</th><th>Phone</th>
+                <th>Farmstay</th><th>Check-in</th><th>Check-out</th>
+                <th>Guests</th><th>Total</th><th>Status</th><th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${bookings}">
+                <td th:text="${b.id}"></td>
+                <td th:text="${b.user != null ? b.user.name : 'Deleted user'}"></td>
+                <td th:text="${b.user != null ? b.user.phone : '-'}"></td>
+                <td th:text="${b.farmstay != null ? b.farmstay.name : 'Deleted farmstay'}"></td>
+                <td th:text="${b.checkIn}"></td>
+                <td th:text="${b.checkOut}"></td>
+                <td th:text="${b.guests}"></td>
+                <td th:text="'₹' + ${b.totalPrice}"></td>
+                <td><span class="status" th:text="${b.displayStatus}"></span></td>
+                <td>
+                    <!-- Cancel only shows before the stay starts -->
+                    <form th:if="${b.canCancel()}"
+                          th:action="@{/admin/cancel/{id}(id=${b.id})}"
+                          method="post"
+                          onsubmit="return confirm('Cancel this booking?')">
+                        <button class="btn btn-danger" type="submit">Cancel</button>
+                    </form>
+                    <span th:unless="${b.canCancel()}">—</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

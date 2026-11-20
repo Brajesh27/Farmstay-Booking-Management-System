@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Bookings</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/" class="btn btn-light">← Farmstays</a>
+</header>
+
+<main class="container">
+    <h1>My Bookings</h1>
+    <p class="subtitle">View and manage your reservations.</p>
+
+    <p class="empty" th:if="${bookings.isEmpty()}">
+        You have no bookings yet. <a href="/">Explore farmstays</a>
+    </p>
+
+    <div class="table-wrap" th:unless="${bookings.isEmpty()}">
+        <table>
+            <thead>
+            <tr>
+                <th>#</th><th>Farmstay</th><th>Check-in</th>
+                <th>Check-out</th><th>Nights</th><th>Guests</th>
+                <th>Total</th><th>Status</th><th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="b : ${bookings}">
+                <td th:text="${b.id}"></td>
+                <td th:text="${b.farmstay.name}"></td>
+                <td th:text="${b.checkIn}"></td>
+                <td th:text="${b.checkOut}"></td>
+                <td th:text="${b.nights}"></td>
+                <td th:text="${b.guests}"></td>
+                <td th:text="'₹' + ${b.totalPrice}"></td>
+                <td><span class="status" th:text="${b.displayStatus}"></span></td>
+                <td>
+                    <!-- Cancel only shows before the stay starts -->
+                    <form th:if="${b.canCancel()}"
+                          th:action="@{/cancel/{id}(id=${b.id})}"
+                          method="post"
+                          onsubmit="return confirm('Cancel this booking?')">
+                        <button class="btn btn-danger" type="submit">Cancel</button>
+                    </form>
+                    <span th:unless="${b.canCancel()}">—</span>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+</main>
+
+</body>
+</html>

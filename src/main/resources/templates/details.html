@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title th:text="${farmstay.name}">Farmstay</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr@4.6.13/dist/flatpickr.min.js"></script>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="/" class="logo">🌿 Green Valley</a>
+    <a href="/" class="btn btn-light">← All Farmstays</a>
+</header>
+
+<main class="container">
+    <div class="details-heading">
+        <h1 th:text="${farmstay.name}"></h1>
+        <a th:if="${currentUser != null and currentUser.admin}"
+           th:href="@{/edit/{id}(id=${farmstay.id})}">✏️ Edit Farmstay</a>
+    </div>
+
+    <div class="gallery" th:unless="${farmstay.photos.isEmpty()}">
+        <img th:each="p : ${farmstay.photos}" th:src="${p}" th:alt="${farmstay.name}">
+    </div>
+    <p class="empty" th:if="${farmstay.photos.isEmpty()}">No photos yet.</p>
+
+    <section class="panel">
+        <h2>Property Details</h2>
+        <p th:if="${farmstay.location != null and !farmstay.location.isEmpty()}">📍 <span th:text="${farmstay.location}"></span></p>
+        <p>🏡 Entire farmstay · Up to <b th:text="${farmstay.maxGuests}"></b> guests</p>
+        <p th:if="${farmstay.description != null and !farmstay.description.isEmpty()}"
+           th:text="${farmstay.description}" style="white-space: pre-line"></p>
+        <h2 class="price">
+            ₹<span th:text="${farmstay.pricePerNight}"></span>
+            <small>/ night</small>
+        </h2>
+    </section>
+
+    <section class="panel">
+        <h2>Reviews</h2>
+        <p th:if="${reviews.isEmpty()}" class="empty">No reviews yet.</p>
+        <p th:unless="${reviews.isEmpty()}">
+            <b class="stars" th:text="'★ ' + ${#numbers.formatDecimal(averageRating, 1, 1)}"></b>
+            · <span th:text="${reviews.size()} + ' review(s)'"></span>
+        </p>
+
+        <div class="review" th:each="r : ${reviews}">
+            <p>
+                <span class="stars" th:text="${r.stars}"></span>
+                <b th:text="${r.user != null ? r.user.name : 'Guest'}"></b>
+                <small class="muted" th:text="${r.date}"></small>
+            </p>
+            <p th:text="${r.comment}"></p>
+        </div>
+
+        <form th:if="${canReview}" action="/review" method="post">
+            <h3>Rate your stay</h3>
+            <input type="hidden" name="farmstayId" th:value="${farmstay.id}">
+            <label>Stars</label>
+            <select name="rating" required>
+                <option value="5">★★★★★ Excellent</option>
+                <option value="4">★★★★☆ Good</option>
+                <option value="3">★★★☆☆ Okay</option>
+                <option value="2">★★☆☆☆ Poor</option>
+                <option value="1">★☆☆☆☆ Bad</option>
+            </select>
+            <label>Comment</label>
+            <textarea name="comment" rows="3" placeholder="How was your stay?"></textarea>
+            <button class="btn" type="submit">Submit Review</button>
+        </form>
+    </section>
+
+    <section class="panel" th:if="${currentUser == null or !currentUser.admin}">
+        <h2>Book This Farmstay</h2>
+
+        <p class="message error" th:if="${error}" th:text="${error}"></p>
+
+        <p th:if="${currentUser == null}">
+            <a href="/login" class="btn">Login to Book</a>
+        </p>
+
+        <form th:if="${currentUser != null}" action="/book" method="post">
+            <input type="hidden" name="farmstayId" th:value="${farmstay.id}">
+
+            <div class="form-grid">
+                <div>
+                    <label>Check-in</label>
+                    <input id="checkIn" name="checkIn" placeholder="Choose date" required>
+                </div>
+                <div>
+                    <label>Check-out</label>
+                    <input id="checkOut" name="checkOut" placeholder="Choose date" required>
+                </div>
+            </div>
+
+            <label>Number of Guests</label>
+            <input type="number" name="guests" min="1"
+                   th:max="${farmstay.maxGuests}" value="1" required>
+
+            <button class="btn" type="submit">Book Now</button>
+        </form>
+
+        <p class="hint">Greyed-out dates are already booked.</p>
+    </section>
+</main>
+
+<script th:inline="javascript">
+    const bookedNights = /*[[${bookedNights}]]*/ [];
+
+    function isBooked(date) {
+        return bookedNights.includes(flatpickr.formatDate(date, "Y-m-d"));
+    }
+
+    const checkOutPicker = flatpickr("#checkOut", {
+        dateFormat: "Y-m-d",
+        minDate: new Date().fp_incr(1),
+        disable: [date => {
+            const previous = new Date(date);
+            previous.setDate(previous.getDate() - 1);
+            return isBooked(previous);
+        }]
+    });
+
+    flatpickr("#checkIn", {
+        dateFormat: "Y-m-d",
+        minDate: "today",
+        disable: [isBooked],
+        onChange: dates => {
+            if (dates.length) {
+                const nextDay = new Date(dates[0]);
+                nextDay.setDate(nextDay.getDate() + 1);
+                checkOutPicker.set("minDate", nextDay);
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
