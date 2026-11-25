@@ -1,6 +1,6 @@
 # FarmStay Booking System
 
-This is our Software Engineering project. It is a website where people can book farmstays. A farmstay here is booked as a whole villa, there are no separate rooms.
+This is a Software Engineering project. It is a website where people can book farmstays. A farmstay here is booked as a whole villa, there are no separate rooms.
 
 There are two types of users, guest and admin. Guests can search and book farmstays. The admin (owner) adds the farmstays and looks after all the bookings.
 
@@ -25,20 +25,20 @@ Admin:
 
 ## Technologies
 
-Java 17, Spring Boot 3, Thymeleaf, MongoDB, Maven, HTML and CSS. We used flatpickr for the calendar.
+Java 17, Spring Boot 3, Thymeleaf, MongoDB, Maven, HTML and CSS. The calendar uses flatpickr.
 
 ## OOP concepts
 
-We tried to use OOP concepts wherever it made sense:
+OOP concepts used in the project:
 
-- Classes and objects: Farmstay, User, Booking and Review are our model classes.
-- Encapsulation: fields are private and we use getters and setters. A booking is cancelled only through the cancel() method.
+- Classes and objects: Farmstay, User, Booking and Review are the model classes.
+- Encapsulation: fields are private and are used through getters and setters. A booking is cancelled only through the cancel() method.
 - Abstraction: controllers just call service methods and don't know how the data is saved in MongoDB.
-- Inheritance: our repositories extend MongoRepository so we get save, findAll, findById and delete for free.
+- Inheritance: the repositories extend MongoRepository so save, findAll, findById and delete come for free.
 - Polymorphism: WebConfig overrides addResourceHandlers() from WebMvcConfigurer to show uploaded photos.
 - Association: a Booking has a User and a Farmstay.
 
-We kept one User class with an admin true/false field instead of making Guest and Admin classes because both had the same fields.
+There is only one User class with an admin true/false field instead of separate Guest and Admin classes because both had the same fields.
 
 ## Folder structure
 
@@ -58,7 +58,7 @@ Flow of a request: Browser -> Controller -> Service -> Repository -> MongoDB
 
 ## How to run
 
-We ran it on Mac.
+Tested on Mac.
 
 1. Install Java 17, Maven and MongoDB
 
@@ -92,7 +92,7 @@ Admin login: username a, password 123
 
 New accounts from the register page are normal guests.
 
-## Things we want to add later
+## Future improvements
 
 - online payment
 - email after booking
